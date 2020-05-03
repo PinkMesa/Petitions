@@ -1,0 +1,18 @@
+from rest_framework import serializers
+from .models import Petition, Category, User
+from django.contrib.auth.models import Group
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
+class PetitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Petition
+        fields = ('__all__')
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('__all__')
