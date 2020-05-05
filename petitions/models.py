@@ -9,8 +9,9 @@ VOTES_TO_PASS = 200
 EXPIRY_TIME_WEEKS = 2
 
 # Model for possible future changes
-class User(AbstractUser):
-    pass
+#bladb comm
+# class User(AbstractUser):
+#     pass
 
 class Category(models.Model):
     title = models.CharField(max_length = 30)

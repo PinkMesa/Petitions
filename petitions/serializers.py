@@ -1,11 +1,13 @@
 from rest_framework import serializers
-from .models import Petition, Category, User
+#vladb commented User
+from .models import Petition, Category
 from django.contrib.auth.models import Group
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+#vladb commented userserializer
+# class UserSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 class PetitionSerializer(serializers.ModelSerializer):
     voting_passed = serializers.SerializerMethodField()

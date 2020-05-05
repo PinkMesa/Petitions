@@ -11,7 +11,7 @@ from rest_framework.response import Response
 class PetitionViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
-                        viewsets.GenericViewSet):               
+                        viewsets.GenericViewSet):
     queryset = Petition.objects.all().order_by('created_at')
     serializer_class = PetitionSerializer
 
