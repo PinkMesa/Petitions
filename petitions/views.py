@@ -21,8 +21,8 @@ class PetitionViewSet(mixins.CreateModelMixin,
         This view should return a list of petitions
         for a given category.
         """
-        category_title = request.query_params.get('title')
-        filtered_petitions = Petition.objects.filter(category__title=category_title)
+        category_id = request.query_params.get('id')
+        filtered_petitions = Petition.objects.filter(category=category_id)
         serializer = PetitionSerializer(filtered_petitions, many=True)
         return Response(serializer.data)
 
