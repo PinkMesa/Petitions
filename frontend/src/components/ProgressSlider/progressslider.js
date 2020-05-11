@@ -14,7 +14,7 @@ const ProgressSlider = ({value=0}) => {
       backgroundColor: 'currentColor',
       border: '0.1px solid #3f51d5',
       marginTop: -8,
-      marginLeft: -12,
+      marginLeft: 0,
       '&:focus, &:hover, &$active': {
         boxShadow: 'inherit',
       },

@@ -31,6 +31,7 @@ class Petition(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     vote_score = models.IntegerField(default=0)
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="voted_petitions")
+    answer = models.TextField(max_length=2000, default="")
     url = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'block',
     width: '100%',
     margin: theme.spacing(1),
-    padding: '1%',
+    padding: '1vh',
     cursor: 'pointer',
   },
   boldText: {
@@ -45,7 +45,7 @@ const Petition = ({petition, isVotesCountHidden = false,}) => {
   };
 
   const petitionClickHandler = () => {
-    history.push(`/petition/${petition.id}`, {petition});
+    history.push(`/petitions/${petition.id}`);
   };
 
   return (
@@ -53,21 +53,21 @@ const Petition = ({petition, isVotesCountHidden = false,}) => {
            onMouseOver={onMouseOver}
            onMouseOut={onMouseOut}
            onClick={petitionClickHandler}>
-      <Grid container spacing={0}>
+      <Grid container>
         <Grid container item lg={isVotesCountHidden ? 12 : 8} xs={12}>
-          <Grid item lg={6} xs={6}>
+          <Grid item xs={6}>
             <Typography variant="subtitle1" className={classes.text}>
               <AttachmentIcon style={{color: '#f44336'}}/>
               &nbsp;{petition.id}
             </Typography>
           </Grid>
-          <Grid item lg={6} xs={6}>
+          <Grid item xs={6}>
             <Typography variant="subtitle1" className={classes.text}>
               <CategoryIcon style={{color: '#f44336'}}/>
               &nbsp;{petition.category}
             </Typography>
           </Grid>
-          <Grid item lg={12} xs={12}>
+          <Grid item xs={12}>
             <br/>
             <Typography variant="body1" className={classes.boldText}>
               <MessageIcon style={{color: '#f44336'}}/>
@@ -92,7 +92,7 @@ const Petition = ({petition, isVotesCountHidden = false,}) => {
           <Grid item xs={6}>
             <Typography variant="subtitle1" className={classes.text}>
               <CreateIcon style={{color: '#f44336'}}/>
-              &nbsp;{petition.creator_id}
+              &nbsp;{petition.creator.firstName+" "+petition.creator.lastName}
             </Typography>
           </Grid>
         </Grid>

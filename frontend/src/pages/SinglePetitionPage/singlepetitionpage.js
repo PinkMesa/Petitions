@@ -3,9 +3,9 @@ import './singlepetitionpage.css';
 import {Container} from "@material-ui/core";
 import {useLocation, useRouteMatch} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {fetchPetition} from '../../redux/actions/petitions';
+import {fetchPetition, votePetition} from '../../redux/actions/petitions';
 import ProgressComponent from "../../components/ProgressComponent";
-import {Grid, Typography, Paper} from '@material-ui/core';
+import {Grid, Typography, Paper, Button} from '@material-ui/core';
 import Chart from 'chart.js';
 import ProgressSlider from "../../components/ProgressSlider";
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,11 +14,13 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import MessageIcon from "@material-ui/icons/Message";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import CreateIcon from "@material-ui/icons/Create";
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles({
   container: {
-    backgroundColor: '#c5cae9',
+    backgroundColor: 'rgb(207, 232, 252)',
     paddingTop: '2vh',
+    fontFamily: 'Roboto',
   },
   gridContainer: {
   },
@@ -42,9 +44,14 @@ const useStyles = makeStyles({
 });
 
 const SinglePetitionPage = props => {
+  const history = useHistory();
   const [petition, setPetition] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const isLoadingFromRedux = useSelector(state => state.petitions.currentPetitionLoading);
+  const errorFromRedux = useSelector(state => state.petitions.currentPetitionError);
+  const votedPetitionLoading = useSelector(state => state.petitions.votedPetitionLoading);
+  const votedPetitionMessage = useSelector(state => state.petitions.votedPetitionMessage);
+  const votedPetitionId = useSelector(state => state.petitions.votedPetitionId);
+  const tokenFromRedux = useSelector(state => state.auth.token);
   const [votesCount, setVotesCount] = useState(0);
   const [petitionStatus, setPetitionStatus] = useState('Триває збір підписів');
   const location = useLocation();
@@ -52,37 +59,24 @@ const SinglePetitionPage = props => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const currentPetitionFromRedux = useSelector(state => state.petitions.currentPetition);
-  console.log('SinglePetitionPage currentPetitionFromRedux', currentPetitionFromRedux);
-  const errorFromRedux = useSelector(state => state.petitions.currentPetitionError);
 
   useEffect(() => {
-    //check if we came from home page with state in the history.push
-    let petition = location.state ? location.state.petition : null;
-    if (petition) {
-      setPetition(petition);
-      console.log('petition from location state', petition);
-      debugger;
+    dispatch(fetchPetition(match.params.id));
+  },[votedPetitionMessage]);
+
+  useEffect(() => {
+    const petitionId = match.params.id;
+    //check if we have this petition from redux
+    console.log('SinglePetitionPage currPetFromRed, petitionId', currentPetitionFromRedux, petitionId);
+    if (currentPetitionFromRedux && currentPetitionFromRedux.id === petitionId) {
+      setPetition(currentPetitionFromRedux);
+      console.log('SinglePetitionPage petitionFromRedux');
     } else {
-      const petitionId = match.params.id;
-      //check if we have this petition from redux
-      console.log('SinglePetitionPage currPetFromRed, petitionId', currentPetitionFromRedux, petitionId);
-      if (currentPetitionFromRedux && currentPetitionFromRedux.id === petitionId) {
-        setPetition(currentPetitionFromRedux);
-        console.log('SinglePetitionPage petitionFromRedux');
-      } else {
-        console.log('SinglePetitionPage fetch petition');
-        // fetch petition
-        setIsLoading(true);
-        dispatch(fetchPetition(petitionId)).finally(() => {
-          setIsLoading(false)
-        })
-      }
+      console.log('SinglePetitionPage fetch petition');
+      dispatch(fetchPetition(petitionId));
     }
-  }, [location.state, match.params, currentPetitionFromRedux]);
 
-  useEffect(() => {
-    setError(errorFromRedux);
-  }, [errorFromRedux]);
+  }, []);
 
   useEffect(() => {
     if(petition) {
@@ -91,13 +85,24 @@ const SinglePetitionPage = props => {
     }
   }, [petition]);
 
+  useEffect(() => {
+    if(petition) {
+      setVotesCount(petition.votes_count);
+      setPetitionStatus(petition.answer ? 'Збір підписів завершено' : 'Триває збір підписів');
+    }
+  }, [petition]);
+
+  useEffect(() => {
+    setPetition(currentPetitionFromRedux);
+  },[currentPetitionFromRedux]);
+
   if (errorFromRedux) {
     return (
       <div>Error</div>
     );
   }
 
-  if (isLoading) {
+  if (isLoadingFromRedux) {
     return (
       <ProgressComponent/>
     );
@@ -122,46 +127,97 @@ const SinglePetitionPage = props => {
     options: {cutoutPercentage: 50}
   });
 
-  console.log('SinglePetitionPage petition', petition);
+  const votePetitionHandler = () => {
+    dispatch(votePetition(petition.id));
+  };
+
+  console.log('votedPetition', votedPetitionMessage, votedPetitionLoading);
   return (
     <Container maxWidth="xl" className={classes.container}>
       <Grid container spacing={1} className={classes.gridContainer}>
-        <Grid item xs={8} style={{}} className={classes.gridSubContainer}>
-          <Typography variant='subtitle1' className={classes.pageTitle}>
-            Інформація про петицію
-          </Typography>
-          <Typography variant='subtitle1' className={classes.petitionStatusText}>
-            <AttachmentIcon style={{color: '#f44336'}}/>
-            &nbsp;{petition ? petition.id : null}
-          </Typography>
-          <Typography variant='subtitle1' className={classes.petitionStatusText}>
-            <MessageIcon style={{color: '#f44336'}}/>
-            &nbsp;{petition ? petition.title : null}
-          </Typography>
-          <Typography variant='subtitle1' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh'}}>
-            <CreateIcon style={{color: '#f44336'}}/>
-            &nbsp;Ініціатор: {petition ? petition.creator_id : null}
-          </Typography>
-          <Typography variant='subtitle2' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh'}}>
-            <AddCircleIcon fontSize='small' style={{color: '#f44336'}}/>
-            &nbsp;&nbsp;Дата оприлюднення: {petition ? petition.created_date.toLocaleDateString() : null}
-          </Typography>
-          <Paper elevation={3}>
-            <Typography variant='body1' align='center'>
-              {petition ? petition.description : null}
+        <Grid item md={8} xs={12} className={classes.gridSubContainer}>
+          <Grid item xs={12} className={classes.gridSubContainer}>
+            <Typography variant='subtitle1' className={classes.pageTitle} align='center'>
+              Інформація про петицію
             </Typography>
-          </Paper>
+          </Grid>
+          <Grid item xs={12} className={classes.gridSubContainer}>
+            <Typography variant='subtitle1' className={classes.petitionStatusText}>
+              <AttachmentIcon style={{color: '#f44336'}}/>
+              &nbsp;{petition ? petition.id : null}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.gridSubContainer}>
+            <Typography variant='subtitle1' className={classes.petitionStatusText}>
+              <MessageIcon style={{color: '#f44336'}}/>
+              &nbsp;{petition ? petition.title : null}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.gridSubContainer}>
+          <Typography variant='subtitle1' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh'}}>
+              <CreateIcon style={{color: '#f44336'}}/>
+              &nbsp;Ініціатор: {petition ? petition.creator.firstName+" "+petition.creator.lastName : null}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.gridSubContainer}>
+          <Typography variant='subtitle2' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh'}}>
+              <AddCircleIcon fontSize='small' style={{color: '#f44336'}}/>
+              &nbsp;&nbsp;Дата оприлюднення: {petition ? petition.created_date.toLocaleDateString() : null}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.gridSubContainer}>
+            <Typography variant='h6' align='left'>
+            {`Текст петиції: `}
+            </Typography>
+            <br/>
+            <Paper elevation={3} style={{padding: '1%',backgroundColor: 'rgb(207, 232, 252)'}}>
+              <Typography variant='body1' align='left'>
+                {petition ? petition.description.split('\n').map((i,key) =>
+                  (<p key={key}><pre style={{fontFamily: 'Roboto-Regular'}}>{i}</pre></p>)) : null}
+              </Typography>
+            </Paper>
+          </Grid>
+          {petition && petition.answer && (
+            <Grid item xs={12} className={classes.gridSubContainer}>
+              <Typography variant='h6' align='left'>
+                {`Відповідь на петицію: `}
+              </Typography>
+              <Paper elevation={3} style={{padding: '1%',backgroundColor: 'rgb(207, 232, 252)'}}>
+                <Typography variant='body1' align='left' className={classes.votesCountText}>
+                  {petition.answer.split('\n').map((i,key) =>
+                    (<p key={key}><pre style={{fontFamily: 'Roboto-Regular'}}>{i}</pre></p>))}
+                </Typography>
+              </Paper>
+            </Grid>
+          )}
         </Grid>
-        <Grid container item xs={4}>
-          <Typography variant='subtitle1' align='center' className={classes.petitionStatusText}>
-            <CachedIcon fontSize='large' style={{color: '#f44336'}}/>
-            {petitionStatus}
-          </Typography>
-          <canvas id="myChart"></canvas>
-          <ProgressSlider value={petition ? petition.votes_count : 0}/>
-          <Typography variant='subtitle1' align='center' className={classes.votesCountText}>
-            {`Зібрано ${votesCount} із 200`}
-          </Typography>
+        <Grid container item md={4} xs={12}>
+          <Grid item xs={12}>
+            <Typography variant='subtitle1' align='center' className={classes.petitionStatusText}>
+              <CachedIcon fontSize='large' style={{color: '#f44336'}}/>
+              {petitionStatus}
+            </Typography>
+            {petition && (<canvas id="myChart"></canvas>)}
+            <ProgressSlider value={petition ? petition.votes_count : 0}/>
+            <Typography variant='subtitle1' align='center' className={classes.votesCountText}>
+              {`Зібрано ${votesCount} із 200`}
+            </Typography>
+          </Grid>
+          {petition && !petition.answer && tokenFromRedux && (
+            <Grid item xs={12} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <Button variant="contained" color="secondary" size="large" onClick={votePetitionHandler}
+                      disabled={votedPetitionLoading}>
+                Підтримати петицію
+              </Button>
+            </Grid>)
+          }
+            {petition && votedPetitionMessage && votedPetitionId == petition.id && (
+              <Grid item xs={12}>
+                <Typography variant='body1' align='center'>
+                  {votedPetitionMessage}
+                </Typography>
+              </Grid>
+            )}
         </Grid>
       </Grid>
 

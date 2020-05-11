@@ -7,6 +7,11 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {TitleAndCategoryForm, DescriptionForm, Review} from "../../components/CreatePetitionForms";
+import {useDispatch, useSelector} from "react-redux";
+import {createPetition} from "../../redux/actions/petitions";
+import ProgressComponent from "../../components/ProgressComponent";
+import {CategoryTitles} from "../../dummy-data/petitions";
+import {useHistory} from 'react-router-dom';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
@@ -79,9 +84,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = ['Вибір категорії', 'Тіло петиції', 'Огляд'];
+const steps = ['Вибір категорії', 'Тіло петиції', 'Перевірка даних'];
 
 const CreatePetitionPage = () => {
+  const history = useHistory();
+  const isLoading = useSelector(state => state.petitions.addedPetitionLoading);
+  const petitionUrl = useSelector(state => state.petitions.addedPetitionUrl);
+  const dispatch = useDispatch();
 
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -123,7 +132,8 @@ const CreatePetitionPage = () => {
                             descriptionValue={formState.inputValues.description}
                             errorText="Будь ласка введіть опис петиції від 50 до 500 символів" />;
       case 2:
-        return <Review />;
+        return <Review title={formState.inputValues.title} category={CategoryTitles[formState.inputValues.category]}
+                       description={formState.inputValues.description}/>;
       default:
         throw new Error('Виникла помилка');
     }
@@ -131,13 +141,17 @@ const CreatePetitionPage = () => {
 
   const handleNext = () => {
     //send request if
-    if(activeStep === 1) {
+    if(activeStep === 2) {
       if(!formState.formIsValid) {
         //todo err
         console.log('smth went wrong');
       } else {
-
+        dispatch(createPetition(formState.inputValues.title,
+          formState.inputValues.category, formState.inputValues.description));
       }
+    }
+    if(activeStep === steps.length) {
+      history.push(`/petitions/${petitionUrl}`);
     }
     setActiveStep(activeStep + 1);
   };
@@ -159,14 +173,13 @@ const CreatePetitionPage = () => {
         ))}
       </Stepper>
       <React.Fragment> {/*if this is last step + 1*/}
-        {activeStep === steps.length ? (
+        {activeStep === steps.length ? isLoading ? (<ProgressComponent text='Створюємо петицію, зачекайте.'/>) : (
           <React.Fragment>
             <Typography variant="h5" gutterBottom>
-              Thank you for your order.
+              Дякуємо за опублікування петиції.
             </Typography>
             <Typography variant="subtitle1">
-              Your order number is #2001539. We have emailed your order confirmation, and will
-              send you an update when your order has shipped.
+              {`Посилання на петицію: ${petitionUrl}`}
             </Typography>
           </React.Fragment>
         ) : (
@@ -174,7 +187,7 @@ const CreatePetitionPage = () => {
             {/*buttons*/}
             {getStepContent(activeStep)}
             <div className={classes.buttons}>
-              {activeStep !== 0 && (
+              {activeStep != 0 && activeStep != steps.length && (
                 <Button onClick={handleBack} className={classes.button}>
                   Назад
                 </Button>
@@ -187,7 +200,8 @@ const CreatePetitionPage = () => {
                 disabled={activeStep === 0 ? !(formState.inputValidities.title && formState.inputValidities.category) :
                 activeStep === 1 ? !formState.inputValidities.description : false}
               >
-                {activeStep === steps.length - 2 ? 'Опублікувати петицію' : 'Далі'}
+                {activeStep === steps.length - 1 ? 'Опублікувати петицію' : activeStep === steps.length ?
+                  'На сторінку петиції' : 'Далі'}
               </Button>
             </div>
           </React.Fragment>

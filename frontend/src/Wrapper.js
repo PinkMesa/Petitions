@@ -28,13 +28,13 @@ const Wrapper = () => {
   }
 
   return (
-    <>
+    <div style={{backgroundColor: 'rgb(207, 232, 252)'}}>
       <Header onLoadingChange={isLoadingChangeHandler}/>
       <Switch>
         <Route exact path="/">
           <HomePage/>
         </Route>
-        <Route path="/petition/:id">
+        <Route path="/petitions/:id/">
           <SinglePetitionPage/>
         </Route>
         <Route exact path="/petitions/create">
@@ -47,7 +47,7 @@ const Wrapper = () => {
           {userId ? <Redirect to='/'/> : (<SignUp/>)}
         </Route>
       </Switch>
-    </>
+    </div>
   )
 };
 

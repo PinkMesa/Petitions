@@ -12,6 +12,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import {useSelector} from "react-redux";
+import ProgressComponent from "../ProgressComponent";
+import {CategoryTitles} from "../../dummy-data/petitions";
 
 const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
@@ -144,9 +147,9 @@ const TitleAndCategoryForm = ({onInputChange, titleValue, categoryValue, errorTe
               value={categoryValue}
               onChange={e => handleChangeInput('category', e.target.value)}
             >
-              <MenuItem value={0}>Незаконна забудова</MenuItem>
-              <MenuItem value={1}>Гіпермаркет</MenuItem>
-              <MenuItem value={2}>Третя категорія</MenuItem>
+              <MenuItem value={1}>{CategoryTitles['1']}</MenuItem>
+              <MenuItem value={2}>{CategoryTitles['2']}</MenuItem>
+              <MenuItem value={3}>{CategoryTitles['3']}</MenuItem>
             </Select>
         </FormControl>
       </Grid>
@@ -209,73 +212,33 @@ const DescriptionForm = ({descriptionValue, errorText, onInputChange}) => {
 
 //Review
 
-const products = [
-  { name: 'Product 1', desc: 'A nice thing', price: '$9.99' },
-  { name: 'Product 2', desc: 'Another thing', price: '$3.45' },
-  { name: 'Product 3', desc: 'Something else', price: '$6.51' },
-  { name: 'Product 4', desc: 'Best thing of all', price: '$14.11' },
-  { name: 'Shipping', desc: '', price: 'Free' },
-];
-const addresses = ['1 Material-UI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
-const payments = [
-  { name: 'Card type', detail: 'Visa' },
-  { name: 'Card holder', detail: 'Mr John Smith' },
-  { name: 'Card number', detail: 'xxxx-xxxx-xxxx-1234' },
-  { name: 'Expiry date', detail: '04/2024' },
-];
-
-
-
-const Review = () => {
+const Review = props => {
   const classes = useStyles();
 
+  const petitionUrl = useSelector(state => state.petitions.addedPetitionUrl);
+
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Order summary
-      </Typography>
-      <List disablePadding>
-        {products.map((product) => (
-          <ListItem className={classes.listItem} key={product.name}>
-            <ListItemText primary={product.name} secondary={product.desc} />
-            <Typography variant="body2">{product.price}</Typography>
-          </ListItem>
-        ))}
-        <ListItem className={classes.listItem}>
-          <ListItemText primary="Total" />
-          <Typography variant="subtitle1" className={classes.total}>
-            $34.06
-          </Typography>
-        </ListItem>
-      </List>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="h6" gutterBottom className={classes.title}>
-            Shipping
-          </Typography>
-          <Typography gutterBottom>John Smith</Typography>
-          <Typography gutterBottom>{addresses.join(', ')}</Typography>
-        </Grid>
-        <Grid item container direction="column" xs={12} sm={6}>
-          <Typography variant="h6" gutterBottom className={classes.title}>
-            Payment details
-          </Typography>
-          <Grid container>
-            {payments.map((payment) => (
-              <React.Fragment key={payment.name}>
-                <Grid item xs={6}>
-                  <Typography gutterBottom>{payment.name}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography gutterBottom>{payment.detail}</Typography>
-                </Grid>
-              </React.Fragment>
-            ))}
-          </Grid>
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="body1" gutterBottom className={classes.title}>
+          {`Заголовок петиції: ${props.title}`}
+        </Typography>
       </Grid>
-    </React.Fragment>
+      <Grid item xs={12}>
+        <Typography variant="body1" gutterBottom className={classes.title}>
+          {`Категорія: ${props.category}`}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body1" gutterBottom className={classes.title}>
+          Текст петиції:
+          <pre>
+          {`${props.description}`}
+          </pre>
+        </Typography>
+      </Grid>
+      </Grid>
   );
-}
+};
 
 export {TitleAndCategoryForm, DescriptionForm, Review};
