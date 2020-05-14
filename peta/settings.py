@@ -41,9 +41,25 @@ CORS_ALLOW_HEADERS = [
     'Content-Type',
 ]
 
-AUTHENTICATION_BACKENDS = (
+SOCIAL_AUTH_FACEBOOK_KEY = '867332117068627'        # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = '9c8e265724022c54e7377a595987b2b8'  # App Secret
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_link'] # add this
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {       # add this
+  'fields': 'id, name, email, picture.type(large), link'
+}
+SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [                 # add this
+    ('name', 'name'),
+    ('email', 'email'),
+    ('picture', 'picture'),
+    ('link', 'profile_url'),
+]
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.linkedin.LinkedinOAuth2',
+    'social_core.backends.instagram.InstagramOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
-)
+]
 
 # Application definition
 
