@@ -37,7 +37,7 @@ const Wrapper = () => {
         <Route path="/petitions/:id/">
           <SinglePetitionPage/>
         </Route>
-        <Route exact path="/petitions/create">
+        <Route exact path="/petition/create">
           <CreatePetitionPage/>
         </Route>
         <Route exact path="/signin">

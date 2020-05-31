@@ -87,6 +87,7 @@ const useStyles = makeStyles((theme) => ({
 const steps = ['Вибір категорії', 'Тіло петиції', 'Перевірка даних'];
 
 const CreatePetitionPage = () => {
+  console.log('CREATE PETITION PAGE');
   const history = useHistory();
   const isLoading = useSelector(state => state.petitions.addedPetitionLoading);
   const petitionUrl = useSelector(state => state.petitions.addedPetitionUrl);

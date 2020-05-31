@@ -48,6 +48,7 @@ export const getPetitions = (pageNumber=1) => {
 
       const numPages = resData.numPages;
 
+      console.log('resData', resData);
       resData.petitions.forEach(petition => {
         petitions.push(new Petition(petition.id, petition.title, petition.categoryTitle, petition.text,
           petition.author, petition.voteScore, petition.createdAt, petition.answer));
