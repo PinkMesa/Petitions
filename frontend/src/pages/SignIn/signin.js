@@ -229,4 +229,3 @@ const Signin = () => {
 };
 
 export default Signin;
-// /{backgroundColor: '#4285f4'}

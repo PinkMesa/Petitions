@@ -38,7 +38,7 @@ const Wrapper = () => {
           <SinglePetitionPage/>
         </Route>
         <Route exact path="/petition/create">
-          <CreatePetitionPage/>
+          {!userId ? <Redirect to='/signin'/> : <CreatePetitionPage/>}
         </Route>
         <Route exact path="/signin">
           {userId ? <Redirect to='/'/> : (<Signin/>)}

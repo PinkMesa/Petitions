@@ -78,8 +78,14 @@ export default [
   new Petition('11', 'Коли доцент відповість на запитання які задавав минулого року', 'Lorem ipsum asdalsdasd', descriptions[11], 1, 0, new Date(), null),
 ];
 
-export const CategoryTitles = {
-  1: 'Незаконна забудова',
-  2: 'Гіпермаркет',
-  3: 'Третя категорія',
-};
+// export const CategoryTitles = {
+//   1: 'Незаконна забудова',
+//   2: 'Гіпермаркет',
+//   3: 'Третя категорія',
+// };
+
+export const CategoryTitles = [
+  {id: 1, title: 'Незаконна забудова'},
+  {id:2, title: 'Гіпермаркет'},
+  {id: 3, title: 'Третя категорія'},
+];

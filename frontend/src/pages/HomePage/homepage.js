@@ -9,15 +9,19 @@ import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { Link } from 'react-router-dom';
 import {useLocation} from 'react-router-dom';
+import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import {useHistory} from 'react-router-dom';
 
 import './homepage.css';
 import ProgressComponent from "../../components/ProgressComponent";
 import {getLastExpiredPetitions, getPetitions} from "../../redux/actions/petitions";
-
-const dummyKnuPetitionService = new DummyKnuPetitionService();
+import {CategoryTitles} from "../../dummy-data/petitions";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 
 const HomePage = () => {
   const location = useLocation();
+  const history = useHistory();
   const query = new URLSearchParams(location.search);
   const page = parseInt(query.get('page') || '1', 10);
   const [petitions, setPetitions] = useState([]);
@@ -30,6 +34,11 @@ const HomePage = () => {
   const numPagesFromRedux = useSelector(state => state.petitions.numPages);
   console.log('pet from red', petitionsFromRedux);
   const loadingFromRedux = useSelector(state => state.petitions.petitionsLoading);
+
+  const filterOptions = createFilterOptions({
+    matchFrom: 'start',
+    stringify: option => option.title,
+  });
 
   useEffect(() => {
     dispatch(getLastExpiredPetitions());
@@ -53,6 +62,55 @@ const HomePage = () => {
   return (
     <Container maxWidth="xl">
       <Grid container style={{backgroundColor: '#cfe8fc'}}>
+        <Grid container item xs={12} style={{paddingTop: '2%'}}>
+          <Grid container item xs={8}>
+            <Grid item xs={4}>
+              <Typography variant="h5" align='center' style={{
+                display: 'flex',
+                itemsAlign: 'center',
+                justifyContent: 'center',
+                fontFamily: 'Roboto-Bold',
+              }}>
+                Фільтрація за категорією
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Autocomplete
+                id="categories-filter"
+                options={CategoryTitles}
+                getOptionLabel={(option) => option.title}
+                filterOptions={filterOptions}
+                style={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Вибір категорії" variant="outlined" />}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                fullWidth
+                style={{height: '100%'}}
+                variant="contained"
+                color="primary"
+                onClick={() => {}}
+              >
+                Відфільтрувати
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container item xs={4}>
+            <Grid item xs={12}>
+              <Button
+                fullWidth
+                style={{height: '100%'}}
+                variant="contained"
+                color="primary"
+                onClick={() => {history.push('/petition/create')}}
+              >
+                Створити власну петицію
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid container xs={12}>
         <Grid container item lg={8} md={6} xs={12} style={{paddingTop: '2%', paddingLeft: '2%'}}>
           <Grid item xs={12} style={{}}>
             <Typography variant="h5" align='center' style={{
@@ -102,6 +160,7 @@ const HomePage = () => {
             {lastExpiredPetitions ? lastExpiredPetitions.slice(0,5).map(petition => <Grid key={petition.id} container item xs={12}><Petition petition={petition}
                                                                                            isVotesCountHidden={true}/></Grid>) : null}
           </Grid>
+        </Grid>
         </Grid>
       </Grid>
     </Container>

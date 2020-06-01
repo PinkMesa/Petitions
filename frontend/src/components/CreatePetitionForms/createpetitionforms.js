@@ -147,9 +147,9 @@ const TitleAndCategoryForm = ({onInputChange, titleValue, categoryValue, errorTe
               value={categoryValue}
               onChange={e => handleChangeInput('category', e.target.value)}
             >
-              <MenuItem value={1}>{CategoryTitles['1']}</MenuItem>
-              <MenuItem value={2}>{CategoryTitles['2']}</MenuItem>
-              <MenuItem value={3}>{CategoryTitles['3']}</MenuItem>
+              <MenuItem value={1}>{CategoryTitles[0].title}</MenuItem>
+              <MenuItem value={2}>{CategoryTitles[1].title}</MenuItem>
+              <MenuItem value={3}>{CategoryTitles[2].title}</MenuItem>
             </Select>
         </FormControl>
       </Grid>
