@@ -80,7 +80,6 @@ export const signUp = (firstName, lastName, username, email, password) => {
 };
 
 export const signIn = (username, password, isRemember = true) => {
-  console.log('signIn action, isremember',isRemember);
   return async dispatch => {
     dispatch(authError(null));
     const response = await fetch(
@@ -119,6 +118,52 @@ export const signIn = (username, password, isRemember = true) => {
       saveDataToStorage(resData.token, resData.userId, resData.email, resData.first_name,
         resData.last_name, resData.username, resData.is_active);
     }
+  };
+};
+
+export const socialSignIn = (firstName, lastName, username, email, socialAuthToken, id, provider, isRemember = true) => {
+  return async dispatch => {
+    dispatch(authError(null));
+    const response = await fetch(
+      `${basePath}/socialsignin`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          username,
+          email,
+          socialAuthToken,
+          provider,
+          id
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+
+      const errorMsgFromServer = errorResData.message;
+      let errorMessage = 'Щось пішло не так!';
+      if (errorMsgFromServer === 'FACEBOOK_AUTH_ERROR') {
+        errorMessage = `Не вдалося ввійти через Facebook, спробуйте інші способи.`;
+      } else if (errorMsgFromServer === 'USERNAME_EXISTS') {
+        errorMessage = `Не вдалося ввійти через Google, спробуйте інші способи.`;
+      }
+      dispatch(authError(new Error(errorMessage)));
+      return;
+    }
+
+    const resData = await response.json();
+    console.log('resData: ', resData);
+    dispatch(authenticate(resData.token, resData.userId, resData.email, resData.first_name,
+      resData.last_name, resData.username, resData.is_active));
+
+    saveDataToStorage(resData.token, resData.userId, resData.email, resData.first_name,
+      resData.last_name, resData.username, resData.is_active);
   };
 };
 
