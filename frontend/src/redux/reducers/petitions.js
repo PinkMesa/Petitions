@@ -15,6 +15,7 @@ import {
 const initialState = {
   numPages: null,
   lastExpiredPetitions: null,
+  stats: null,
 
   petitions:null,
   petitionsError:null,
@@ -45,6 +46,7 @@ export default (state = initialState, action) => {
         ...state,
         petitions: action.petitions,
         numPages: action.numPages,
+        stats: action.stats,
       }
     }
     case SET_PETITIONS_LOADING: {

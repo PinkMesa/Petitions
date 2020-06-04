@@ -222,8 +222,6 @@ const SinglePetitionPage = props => {
             )}
         </Grid>
       </Grid>
-
-
     </Container>
   );
 };

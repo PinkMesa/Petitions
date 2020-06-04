@@ -244,7 +244,6 @@ const SignUp = () => {
                 onChange={(e) => inputChangeHandler('firstName', e.target.value)}
                 value={inputState.inputValues.firstName}
                 onBlur={() => onBlurHandler('firstName')}
-                autoFocus
               />
             </Grid>
             <Grid item xs={12} sm={6}>

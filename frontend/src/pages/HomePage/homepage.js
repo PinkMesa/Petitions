@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {DummyKnuPetitionService} from "../../services";
-import {Container, Typography, Grid} from '@material-ui/core';
+import {Container, Typography, Grid, Paper} from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
 import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
 import Petition from '../../components/petition';
@@ -39,6 +39,7 @@ const HomePage = () => {
   const numPagesFromRedux = useSelector(state => state.petitions.numPages);
   const loadingFromRedux = useSelector(state => state.petitions.petitionsLoading);
   const errorFromRedux = useSelector(state => state.petitions.petitionsError);
+  const statsFromRedux = useSelector(state => state.petitions.stats);
 
   const filterOptions = createFilterOptions({
     matchFrom: 'start',
@@ -60,7 +61,6 @@ const HomePage = () => {
   }, [page]);
 
   const fetchPetitions = () => {
-    console.log('fetching petitions');
     dispatch(getPetitions(page, filterCategoryValue));
   };
 
@@ -203,6 +203,13 @@ const HomePage = () => {
             {lastExpiredPetitions ? lastExpiredPetitions.slice(0,5).map(petition => <Grid key={petition.id} container item xs={12}><Petition petition={petition}
                                                                                            isVotesCountHidden={true}/></Grid>) : null}
           </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={2} style={{backgroundColor: '#cfe8fc'}}>
+            <Typography variant="body1" align='right'>
+              {statsFromRedux && `Всього зібрано петицій: ${statsFromRedux.petitionsCount}, всього голосів: ${statsFromRedux.votesCount}`}
+            </Typography>
+          </Paper>
         </Grid>
       </Grid>
     </Container>

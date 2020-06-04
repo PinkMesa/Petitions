@@ -48,6 +48,7 @@ export const getPetitions = (pageNumber=1, filterCategoryValue=0, authorId=0) =>
       const petitions = [];
 
       const numPages = resData.numPages;
+      const stats = resData.stats;
 
       console.log('resData', resData);
       resData.petitions.forEach(petition => {
@@ -55,7 +56,7 @@ export const getPetitions = (pageNumber=1, filterCategoryValue=0, authorId=0) =>
           petition.author, petition.voteScore, petition.createdAt, petition.answer));
       });
 
-      dispatch({type: SET_PETITIONS, petitions: petitions, numPages: numPages});
+      dispatch({type: SET_PETITIONS, petitions: petitions, numPages: numPages, stats: stats});
     } catch (err) {
       dispatch({type: SET_PETITIONS_ERROR, error: err});
     } finally {
