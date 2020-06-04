@@ -56,7 +56,6 @@ export const signUp = (firstName, lastName, username, email, password) => {
 
     if (!response.ok) {
       const errorResData = await response.json();
-      console.log('errorResData: ', errorResData);
       const errorMsgFromServer = errorResData.message;
       let errorMessage = 'Щось пішло не так!';
       if (errorMsgFromServer === 'EMAIL_EXISTS') {
@@ -70,7 +69,6 @@ export const signUp = (firstName, lastName, username, email, password) => {
     }
 
     const resData = await response.json();
-    console.log('resData: ', resData);
     dispatch(authenticate(resData.token, resData.userId, resData.email, resData.first_name,
       resData.last_name, resData.username, resData.is_active));
 
@@ -111,7 +109,6 @@ export const signIn = (username, password, isRemember = true) => {
     }
 
     const resData = await response.json();
-    console.log('redData: ', resData);
     dispatch(authenticate(resData.token, resData.userId, resData.email, resData.first_name,
       resData.last_name, resData.username, resData.is_active));
     if (isRemember) {
@@ -158,7 +155,6 @@ export const socialSignIn = (firstName, lastName, username, email, socialAuthTok
     }
 
     const resData = await response.json();
-    console.log('resData: ', resData);
     dispatch(authenticate(resData.token, resData.userId, resData.email, resData.first_name,
       resData.last_name, resData.username, resData.is_active));
 

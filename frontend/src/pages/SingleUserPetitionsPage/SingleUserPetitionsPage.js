@@ -39,7 +39,6 @@ const SingleUserPetitionsPage = () => {
   },[id]);
 
   useEffect(() => {
-    console.log('SINGLE USER PET USER DATA', userDataFromRedux);
     setPetitions(petitionsFromRedux);
     setUserData(userDataFromRedux);
 
@@ -57,7 +56,6 @@ const SingleUserPetitionsPage = () => {
   }, [page, id]);
 
   const fetchPetitions = () => {
-    console.log('fetching petitions with author id ',id);
     dispatch(getPetitions(page, 0, id));
   };
 

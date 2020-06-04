@@ -49,7 +49,6 @@ const ERROR_CHANGE = 'ERROR_CHANGE';
 const FORM_IS_VALID_CHANGE = 'FORM_IS_VALID_CHANGE';
 
 const inputReducer = (state, action) => {
-  console.log('inputReducer', action);
   switch (action.type) {
     case INPUT_CHANGE: {
       return {
@@ -216,7 +215,6 @@ const SignUp = () => {
     )
   }
 
-  console.log('state',inputState.touchedValues);
 
   return (
     <Container component="main" maxWidth="xs">

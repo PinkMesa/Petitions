@@ -139,7 +139,6 @@ const CreatePetitionPage = () => {
     //send request if
     if(activeStep === 2) {
       if(!formState.formIsValid) {
-        console.log('smth went wrong');
       } else {
         dispatch(createPetition(formState.inputValues.title,
           formState.inputValues.category, formState.inputValues.description));

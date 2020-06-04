@@ -50,7 +50,6 @@ export const getPetitions = (pageNumber=1, filterCategoryValue=0, authorId=0) =>
       const numPages = resData.numPages;
       const stats = resData.stats;
 
-      console.log('resData', resData);
       resData.petitions.forEach(petition => {
         petitions.push(new Petition(petition.id, petition.title, petition.categoryTitle, petition.text,
           petition.author, petition.voteScore, petition.createdAt, petition.answer));
@@ -137,7 +136,6 @@ export const fetchPetition = (id) => {
 
       let resData = await response.json();
       resData = resData.petition;
-      console.log('resData',resData);
 
       const petition = new Petition(resData.id, resData.title, resData.categoryTitle, resData.text, resData.author, resData.voteScore, resData.createdAt, resData.answer);
 
@@ -184,9 +182,7 @@ export const createPetition = (title, category, description) => {
       }
 
       const resData = await response.json();
-      console.log('resData',resData);
       const petitionUrl = resData.petitionUrl;
-      console.log('petitionUrl ', petitionUrl);
       dispatch({type: SET_ADDED_PETITION_URL, petitionUrl});
     } catch(err) {
       dispatch({type: SET_ADDED_PETITION_ERROR, error: err});
@@ -198,7 +194,6 @@ export const createPetition = (title, category, description) => {
 };
 
 export const getUserData = (id) => {
-  console.log('GET USER DATA');
   return async (dispatch) => {
     dispatch({type: SET_USER_DATA_ERROR, error: null});
     dispatch({type: SET_USER_DATA, userData: null});
@@ -219,7 +214,6 @@ export const getUserData = (id) => {
 
       let resData = await response.json();
       const userData = resData.user;
-      console.log('userData',userData);
 
       const user = new User(userData.id, userData.firstName, userData.lastName, userData.username);
 

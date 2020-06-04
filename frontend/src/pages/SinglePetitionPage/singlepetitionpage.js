@@ -66,13 +66,9 @@ const SinglePetitionPage = props => {
 
   useEffect(() => {
     const petitionId = match.params.id;
-    //check if we have this petition from redux
-    console.log('SinglePetitionPage currPetFromRed, petitionId', currentPetitionFromRedux, petitionId);
     if (currentPetitionFromRedux && currentPetitionFromRedux.id === petitionId) {
       setPetition(currentPetitionFromRedux);
-      console.log('SinglePetitionPage petitionFromRedux');
     } else {
-      console.log('SinglePetitionPage fetch petition');
       dispatch(fetchPetition(petitionId));
     }
 
@@ -132,7 +128,6 @@ const SinglePetitionPage = props => {
     else dispatch(votePetition(petition.id));
   };
 
-  console.log('votedPetition', votedPetitionMessage, votedPetitionLoading);
   return (
     <Container maxWidth="xl" className={classes.container}>
       <Grid container spacing={1} className={classes.gridContainer}>
