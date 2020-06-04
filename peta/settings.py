@@ -25,9 +25,11 @@ SECRET_KEY = '(f65^ifek%otvjdxq^e#0y)r!vy&ia)4_rd5br$=$-=x9n(xto'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
-                 '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000',
-                 'http://gentle-beyond-01174.herokuapp.com/']
+ALLOWED_HOSTS = ['*']
+
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
+#                  '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000',
+#                  'http://gentle-beyond-01174.herokuapp.com/']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -36,10 +38,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'http://gentle-beyond-01174.herokuapp.com/'
 )
-
-
 
 CORS_ALLOW_HEADERS = [
     'Token',
@@ -94,6 +93,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -122,8 +122,10 @@ TEMPLATES = [
     },
 ]
 
+REACT_APP_DIR = os.path.join(BASE_DIR, 'frontend')
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend/build/static'),
+    os.path.join(REACT_APP_DIR, 'build', 'static'),
 ]
 
 WSGI_APPLICATION = 'peta.wsgi.application'
@@ -181,9 +183,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles'),
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Redirects
 LOGIN_REDIRECT_URL = '/'
