@@ -170,6 +170,7 @@ export const createPetition = (title, category, description) => {
 
       if(!response.ok) {
         const errorResData = await response.json();
+        console.log('ERROR PETITION CREATE ',errorResData);
         const errorMsgFromServer = errorResData.message;
         let errorMessage = 'Something went wrong!';
         if (errorMsgFromServer === 'TOKEN_DOESNT_PROVIDED') {
@@ -183,6 +184,8 @@ export const createPetition = (title, category, description) => {
 
       const resData = await response.json();
       const petitionUrl = resData.petitionUrl;
+      console.log('PETITION CREATED, RES DATA ',resData);
+      console.log('PETITION URL ',petitionUrl);
       dispatch({type: SET_ADDED_PETITION_URL, petitionUrl});
     } catch(err) {
       dispatch({type: SET_ADDED_PETITION_ERROR, error: err});
