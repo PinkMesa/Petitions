@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
                  '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000',
-                 'http://knu-petitions.herokuapp.com/']
+                 'enigmatic-tor-62201.herokuapp.com']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
