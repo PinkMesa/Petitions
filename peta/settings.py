@@ -26,7 +26,8 @@ SECRET_KEY = '(f65^ifek%otvjdxq^e#0y)r!vy&ia)4_rd5br$=$-=x9n(xto'
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
-                 '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000']
+                 '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000',
+                 'http://gentle-beyond-01174.herokuapp.com/']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -35,6 +36,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'http://gentle-beyond-01174.herokuapp.com/'
 )
 
 
