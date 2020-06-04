@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib import auth
+import requests
 
 class UserSignUp(APIView):
     def get(self, request, format=None):
@@ -96,3 +97,42 @@ class UserSignIn(APIView):
                         'username': user.username,
                         'is_active': user.is_active,
                          })
+
+class UserSocialSignIn(APIView):
+    def post(self, request, format=None):
+        requestData = json.loads(request.readline())
+
+        #check for id
+        if(requestData['provider'] == 'facebook'):
+            r = requests.get(url="https://graph.facebook.com/me", params={'access_token': requestData['socialAuthToken']})
+            response = r.json()
+            if(response['id'] != requestData['id']):
+                return Response({'message': 'FACEBOOK_AUTH_ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+        elif(requestData['provider'] == 'google'):
+            r = requests.get(url="https://oauth2.googleapis.com/tokeninfo", params={'access_token': requestData['socialAuthToken']})
+            data = r.json()
+            if(data['sub'] != requestData['id']):
+                return Response({'message': 'GOOGLE_AUTH_ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=requestData['email'])
+        except User.DoesNotExist:
+            user = None
+
+        if user is None:
+            user = User.objects.create_user(username=requestData['username'], email=requestData['email'],
+                                        first_name=requestData['firstName'], last_name=requestData['lastName'])
+            user.set_password(User.objects.make_random_password())
+            user.save()
+
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            'userId': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'is_active': user.is_active,
+        })

@@ -25,13 +25,16 @@ SECRET_KEY = '(f65^ifek%otvjdxq^e#0y)r!vy&ia)4_rd5br$=$-=x9n(xto'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000', '127.0.0.1:3000']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
+                 '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000']
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 )
 
 
@@ -104,7 +107,7 @@ ROOT_URLCONF = 'peta.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,6 +118,10 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend/build/static'),
 ]
 
 WSGI_APPLICATION = 'peta.wsgi.application'

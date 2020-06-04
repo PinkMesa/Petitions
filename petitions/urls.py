@@ -8,8 +8,8 @@ from . import views
 urlpatterns = [
     path('', views.GetAllPetitions.as_view()),
     path('expired/', views.GetLastExpiredPetitions.as_view()),
-    path('user/<int:user_id>/', views.PetitionListByUser.as_view()),
+    path('user/<int:user_id>/', views.UserData.as_view()),
     path('petition/<int:petition_id>/', views.GetSinglePetition.as_view()),
     path('create/', views.CreatePetition.as_view()),
-    path('vote/<int:petition_id>/', views.PetitionVote.as_view()),
+    path('vote/<int:petition_id>/', views.PetitionVote.as_view())
 ]

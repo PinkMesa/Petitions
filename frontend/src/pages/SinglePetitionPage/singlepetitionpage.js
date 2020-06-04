@@ -151,7 +151,8 @@ const SinglePetitionPage = props => {
           </Grid>
           <Grid item xs={12} className={classes.gridSubContainer} style={{cursor: 'pointer'}}
                 onClick={() => {history.push(`/user/${petition.creator.id}`)}}>
-          <Typography variant='subtitle1' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh'}}>
+          <Typography variant='subtitle1' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh',
+            textDecoration: 'underline'}}>
               <CreateIcon style={{color: '#f44336'}}/>
               &nbsp;Ініціатор: {petition ? petition.creator.firstName+" "+petition.creator.lastName : null}
             </Typography>

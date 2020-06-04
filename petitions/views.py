@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 
+
 class GetLastExpiredPetitions(APIView):
     def get(self, request, format=None):
         petitionsList = list()
@@ -27,20 +28,21 @@ class GetLastExpiredPetitions(APIView):
         resultList = list()
 
         for petition in petitionsList:
-                resultList.append({'id': petition.id,
-                                      'title': petition.title,
-                                      'text': petition.text,
-                                      'author': {
-                                          'id': petition.author.id,
-                                          'firstName': petition.author.first_name,
-                                          'lastName': petition.author.last_name
-                                      },
-                                      'createdAt': petition.created_at,
-                                      'categoryTitle': petition.category.title,
-                                      'voteScore': petition.vote_score,
-                                      'answer': petition.answer})
+            resultList.append({'id': petition.id,
+                               'title': petition.title,
+                               'text': petition.text,
+                               'author': {
+                                   'id': petition.author.id,
+                                   'firstName': petition.author.first_name,
+                                   'lastName': petition.author.last_name
+                               },
+                               'createdAt': petition.created_at,
+                               'categoryTitle': petition.category.title,
+                               'voteScore': petition.vote_score,
+                               'answer': petition.answer})
 
         return Response({'petitions': resultList}, status=status.HTTP_200_OK)
+
 
 class GetAllPetitions(APIView):
     def get(self, request, format=None):
@@ -49,16 +51,32 @@ class GetAllPetitions(APIView):
         except Petition.DoesNotExist:
             return Response({'message': 'PETITIONS_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
 
-        petitionsList = list()
+        petitionsCount = Petition.objects.count()
+        votesCount = 0
+
         for petition in petitions:
-            if not petition.expired and petition.answer == '':
-                petitionsList.append(petition)
+            votesCount += petition.vote_score
+        petitionsList = list()
+
+        category = request.GET.get('category')
+        authorId = request.GET.get('author')
+
+        if category != '0':
+            for petition in petitions:
+                if petition.answer == '' and petition.category.id == int(category) and not petition.expired:
+                    petitionsList.append(petition)
+        elif authorId != '0':
+            for petition in petitions:
+                if petition.author.id == int(authorId):
+                    petitionsList.append(petition)
+        else:
+            for petition in petitions:
+                if petition.answer == '' and not petition.expired:
+                    petitionsList.append(petition)
 
         page = request.GET.get('page')
         paginator = Paginator(petitionsList, 5)
         num_pages = paginator.num_pages
-
-
 
         try:
             petitions = paginator.page(page)
@@ -72,27 +90,29 @@ class GetAllPetitions(APIView):
         resultList = list()
 
         for petition in petitions:
-                resultList.append({'id': petition.id,
-                                      'title': petition.title,
-                                      'text': petition.text,
-                                      'author': {
-                                          'id': petition.author.id,
-                                          'firstName': petition.author.first_name,
-                                          'lastName': petition.author.last_name
-                                      },
-                                      'createdAt': petition.created_at,
-                                      'categoryTitle': petition.category.title,
-                                      'voteScore': petition.vote_score,
-                                      'answer': petition.answer})
+            resultList.append({'id': petition.id,
+                               'title': petition.title,
+                               'text': petition.text,
+                               'author': {
+                                   'id': petition.author.id,
+                                   'firstName': petition.author.first_name,
+                                   'lastName': petition.author.last_name
+                               },
+                               'createdAt': petition.created_at,
+                               'categoryTitle': petition.category.title,
+                               'voteScore': petition.vote_score,
+                               'answer': petition.answer})
 
-        return Response({'petitions': resultList, 'numPages': num_pages}, status=status.HTTP_200_OK)
+        return Response({'petitions': resultList, 'numPages': num_pages, 'stats': {'petitionsCount': petitionsCount,
+                                                                                       'votesCount': votesCount}},
+                        status=status.HTTP_200_OK)
+
 
 class CreatePetition(APIView):
     def post(self, request, format=None):
         body = json.loads(request.readline())
         try:
             token = request.headers['Token']
-            print('TRIED FETCH TOKEN FROM HEADERS')
         except KeyError:
             return Response({'message': 'TOKEN_DOESNT_PROVIDED'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -123,6 +143,7 @@ class CreatePetition(APIView):
 
         return Response({'petitionUrl': petitionUrl}, status=status.HTTP_200_OK)
 
+
 class GetSinglePetition(APIView):
     def get(self, request, petition_id, format=None):
         try:
@@ -142,36 +163,19 @@ class GetSinglePetition(APIView):
                                       'categoryTitle': petition.category.title,
                                       'voteScore': petition.vote_score,
                                       'answer': petition.answer}}, status=status.HTTP_200_OK)
-        # return Response(petition)
 
-class PetitionListByUser(APIView):
-    """
-    List all snippets, or create a new snippet.
-    """
-
+class UserData(APIView):
     def get(self, request, user_id, format=None):
-        print("USER ID", user_id)
+        """
+        Return a list of all users.
+        """
         try:
-            petitions = Petition.objects.filter(author=user_id)
-        except Petition.DoesNotExist:
-            return Response({'message': 'DOES_NOT_EXISTS'}, status=status.HTTP_404_NOT_FOUND)
-
-        petitionsList = list()
-        for petition in petitions:
-            petitionsList.append({'id': petition.id,
-                                  'title': petition.title,
-                                  'text': petition.text,
-                                  'author': {
-                                      'id': petition.author.id,
-                                      'firstName': petition.author.first_name,
-                                      'lastName': petition.author.last_name
-                                  },
-                                  'createdAt': petition.created_at,
-                                  'categoryTitle': petition.category.title,
-                                  'voteScore': petition.vote_score,
-                                  'answer': petition.answer})
-
-        return Response({'petitions': petitionsList}, status=status.HTTP_200_OK)
+            user = User.objects.get(id=int(user_id))
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        print(user.first_name)
+        return Response({'user': {'id': user.id, 'firstName': user.first_name,
+                                  'lastName': user.last_name, 'username': user.username}}, status=status.HTTP_200_OK)
 
 class PetitionVote(APIView):
     def post(self, request, petition_id, format=None):
@@ -179,24 +183,32 @@ class PetitionVote(APIView):
         try:
             petition = Petition.objects.get(id=petition_id)
         except Petition.DoesNotExist:
-            return Response({'message':'PETITION_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'message': 'PETITION_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user_id = Token.objects.get(key=body['Token']).user_id
-            user = User.objects.get(id = user_id)
+            user = User.objects.get(id=user_id)
         except Token.DoesNotExist:
-            return Response({'message':'TOKEN_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'TOKEN_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
-            return Response({'message':'USER_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'USER_DOESNT_EXISTS'}, status=status.HTTP_400_BAD_REQUEST)
 
         voters = petition.voters.all()
 
         for u in voters:
-            if(u==user):
-                return Response({'message':'ALREADY_VOTED'},status=status.HTTP_400_BAD_REQUEST)
+            if (u == user):
+                return Response({'message': 'ALREADY_VOTED'}, status=status.HTTP_400_BAD_REQUEST)
 
         petition.voters.add(user)
         petition.vote_score += 1
         petition.save()
         return Response(status=status.HTTP_200_OK)
+
+class GetStats(APIView):
+    def get(self, request, format=None):
+
+
+        print('petitions count', petitionsCount)
+        return Response({'stats': {'petitionsCount': petitionsCount,
+                                      'votesCount': votesCount}}, status=status.HTTP_200_OK)
+
