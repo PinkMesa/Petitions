@@ -25,11 +25,11 @@ SECRET_KEY = '(f65^ifek%otvjdxq^e#0y)r!vy&ia)4_rd5br$=$-=x9n(xto'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
-#                  '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000',
-#                  'http://gentle-beyond-01174.herokuapp.com/']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000', 'localhost:3000',
+                 '127.0.0.1:3000', 'localhost:8000', 'http://localhost:8000', '127.0.0.1:8000',
+                 'http://knu-petitions.herokuapp.com/']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -185,7 +185,7 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Redirects
 LOGIN_REDIRECT_URL = '/'

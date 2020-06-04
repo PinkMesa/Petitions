@@ -45,7 +45,7 @@ class Petition(models.Model):
     # If votes is enough to pass
     @property
     def voting_passed(self):
-        return self.vote_score > VOTES_TO_PASS
+        return self.vote_score >= VOTES_TO_PASS
 
     # True if vote is expired
     @property

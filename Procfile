@@ -1,1 +1,2 @@
-web gunicorn peta.wsgi
+release: python manage.py migrate
+web: gunicorn peta.wsgi --log-file -
