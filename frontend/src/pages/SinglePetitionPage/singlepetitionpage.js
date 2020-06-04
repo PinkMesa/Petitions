@@ -128,7 +128,8 @@ const SinglePetitionPage = props => {
   });
 
   const votePetitionHandler = () => {
-    dispatch(votePetition(petition.id));
+    if(!tokenFromRedux) history.push('/signin');
+    else dispatch(votePetition(petition.id));
   };
 
   console.log('votedPetition', votedPetitionMessage, votedPetitionLoading);
@@ -153,7 +154,8 @@ const SinglePetitionPage = props => {
               &nbsp;{petition ? petition.title : null}
             </Typography>
           </Grid>
-          <Grid item xs={12} className={classes.gridSubContainer}>
+          <Grid item xs={12} className={classes.gridSubContainer} style={{cursor: 'pointer'}}
+                onClick={() => {history.push(`/user/${petition.creator.id}`)}}>
           <Typography variant='subtitle1' style={{display: 'flex', alignItems: 'center', marginBottom: '2vh'}}>
               <CreateIcon style={{color: '#f44336'}}/>
               &nbsp;Ініціатор: {petition ? petition.creator.firstName+" "+petition.creator.lastName : null}
@@ -203,7 +205,7 @@ const SinglePetitionPage = props => {
               {`Зібрано ${votesCount} із 200`}
             </Typography>
           </Grid>
-          {petition && !petition.answer && tokenFromRedux && (
+          {petition && !petition.answer && (
             <Grid item xs={12} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <Button variant="contained" color="secondary" size="large" onClick={votePetitionHandler}
                       disabled={votedPetitionLoading}>

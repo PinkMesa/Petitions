@@ -13,7 +13,6 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-  console.log('AUTH REDUCER ACTION',action);
   switch (action.type) {
     case AUTHENTICATE: {
       return {

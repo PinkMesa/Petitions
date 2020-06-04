@@ -7,7 +7,7 @@ import {
   SET_CURRENT_PETITION_LOADING, SET_LAST_EXPIRED_PETITIONS,
   SET_PETITIONS,
   SET_PETITIONS_ERROR,
-  SET_PETITIONS_LOADING,
+  SET_PETITIONS_LOADING, SET_USER_DATA, SET_USER_DATA_ERROR, SET_USER_DATA_LOADING,
   VOTE_PETIITON, VOTE_PETITION_ERROR,
   VOTE_PETITION_LOADING
 } from "../actions/petitions";
@@ -32,10 +32,13 @@ const initialState = {
   votedPetitionMessage: null,
   votedPetitionError: null,
   votedPetitionLoading: null,
+
+  userData: null,
+  userDataLoading: null,
+  userDataError: null,
 };
 
 export default (state = initialState, action) => {
-  console.log('PETITIONS REDUCER ACTION',action);
   switch (action.type) {
     case SET_PETITIONS: {
       return {
@@ -117,8 +120,25 @@ export default (state = initialState, action) => {
         lastExpiredPetitions: action.petitions,
       }
     }
+    case SET_USER_DATA: {
+      return {
+        ...state,
+        userData: action.userData,
+      }
+    }
+    case SET_USER_DATA_ERROR: {
+      return {
+        ...state,
+        userDataError: action.error,
+      }
+    }
+    case SET_USER_DATA_LOADING: {
+      return {
+        ...state,
+        userDataLoading: action.loading,
+      }
+    }
     default:
-      console.log('default');
       return state;
   }
 };

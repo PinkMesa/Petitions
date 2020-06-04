@@ -38,7 +38,6 @@ const Petition = ({petition, isVotesCountHidden = false,}) => {
 
   const onMouseOver = () => {
     setElevation(22);
-    console.log('window: ', window);
   };
   const onMouseOut = () => {
     setElevation(3);
@@ -86,7 +85,7 @@ const Petition = ({petition, isVotesCountHidden = false,}) => {
           <Grid item xs={6}>
             <Typography variant="subtitle1" className={classes.text}>
               <AddCircleIcon fontSize='small' style={{color: '#f44336'}}/>
-              &nbsp;&nbsp;{petition.created_date.toDateString()}
+              &nbsp;&nbsp;{petition.created_date.toLocaleDateString()}
             </Typography>
           </Grid>
           <Grid item xs={6}>

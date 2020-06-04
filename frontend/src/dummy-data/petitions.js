@@ -86,6 +86,6 @@ export default [
 
 export const CategoryTitles = [
   {id: 1, title: 'Незаконна забудова'},
-  {id:2, title: 'Гіпермаркет'},
+  {id: 2, title: 'Гіпермаркет'},
   {id: 3, title: 'Третя категорія'},
 ];

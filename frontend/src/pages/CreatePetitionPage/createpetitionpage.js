@@ -16,7 +16,6 @@ import {useHistory} from 'react-router-dom';
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
 const formStateReducer = (state, action) => {
-  console.log('action isValid ',action);
   if (action.type === FORM_INPUT_UPDATE) {
     const updatedValues = {
       ...state.inputValues,
@@ -27,12 +26,9 @@ const formStateReducer = (state, action) => {
       [action.inputId]: action.isValid,
     };
     let updatedFormIsValid = true;
-    console.log('UPDATED VALIDITIES ',updatedValidities);
     for (const key in updatedValidities) {
       updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-      console.log('updated form is valid steps ', updatedFormIsValid);
     }
-    console.log('updatedForm is valid ', updatedFormIsValid);
     return {
       ...state,
       inputValues: updatedValues,
@@ -87,7 +83,6 @@ const useStyles = makeStyles((theme) => ({
 const steps = ['Вибір категорії', 'Тіло петиції', 'Перевірка даних'];
 
 const CreatePetitionPage = () => {
-  console.log('CREATE PETITION PAGE');
   const history = useHistory();
   const isLoading = useSelector(state => state.petitions.addedPetitionLoading);
   const petitionUrl = useSelector(state => state.petitions.addedPetitionUrl);
@@ -133,7 +128,7 @@ const CreatePetitionPage = () => {
                             descriptionValue={formState.inputValues.description}
                             errorText="Будь ласка введіть опис петиції від 50 до 500 символів" />;
       case 2:
-        return <Review title={formState.inputValues.title} category={CategoryTitles[formState.inputValues.category]}
+        return <Review title={formState.inputValues.title} category={CategoryTitles[formState.inputValues.category - 1].title}
                        description={formState.inputValues.description}/>;
       default:
         throw new Error('Виникла помилка');
@@ -144,7 +139,6 @@ const CreatePetitionPage = () => {
     //send request if
     if(activeStep === 2) {
       if(!formState.formIsValid) {
-        //todo err
         console.log('smth went wrong');
       } else {
         dispatch(createPetition(formState.inputValues.title,

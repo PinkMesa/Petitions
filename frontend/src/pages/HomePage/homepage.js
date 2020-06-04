@@ -18,6 +18,8 @@ import {getLastExpiredPetitions, getPetitions} from "../../redux/actions/petitio
 import {CategoryTitles} from "../../dummy-data/petitions";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select/Select";
 
 const HomePage = () => {
   const location = useLocation();
@@ -26,14 +28,17 @@ const HomePage = () => {
   const page = parseInt(query.get('page') || '1', 10);
   const [petitions, setPetitions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [filterCategoryValue, setFilterCategoryValue] = useState(0);
+  const [lastCategoryValue, setLastCategoryValue] = useState(0);
 
   const dispatch = useDispatch();
 
   const petitionsFromRedux = useSelector(state => state.petitions.petitions);
   const lastExpiredPetitions = useSelector(state => state.petitions.lastExpiredPetitions);
   const numPagesFromRedux = useSelector(state => state.petitions.numPages);
-  console.log('pet from red', petitionsFromRedux);
   const loadingFromRedux = useSelector(state => state.petitions.petitionsLoading);
+  const errorFromRedux = useSelector(state => state.petitions.petitionsError);
 
   const filterOptions = createFilterOptions({
     matchFrom: 'start',
@@ -47,11 +52,31 @@ const HomePage = () => {
   useEffect(() => {
     setPetitions(petitionsFromRedux);
     setIsLoading(loadingFromRedux);
-  },[petitionsFromRedux, loadingFromRedux]);
+    setIsError(errorFromRedux);
+  },[petitionsFromRedux, loadingFromRedux, errorFromRedux]);
 
   useEffect(() => {
-    dispatch(getPetitions(page));
+    fetchPetitions();
   }, [page]);
+
+  const fetchPetitions = () => {
+    console.log('fetching petitions');
+    dispatch(getPetitions(page, filterCategoryValue));
+  };
+
+  const categoryFilterHandler = (value) => {
+    setFilterCategoryValue(value);
+  };
+
+  const setRandomFilterCategory = () => {
+    let randomFilterCategoryNumber = lastCategoryValue;
+
+    while(lastCategoryValue == randomFilterCategoryNumber) {
+      randomFilterCategoryNumber = Math.floor(Math.random() * 3 + 1);
+    }
+    setLastCategoryValue(randomFilterCategoryNumber);
+    setFilterCategoryValue(randomFilterCategoryNumber);
+  };
 
   if (isLoading) {
     return (
@@ -59,12 +84,20 @@ const HomePage = () => {
     );
   }
 
+  if (isError) {
+    return (
+      <Typography variant="h5">
+        {`Сталася помилка при завантаженні даних з серверу. ${isError}`}
+      </Typography>
+    );
+  }
+
   return (
     <Container maxWidth="xl">
       <Grid container style={{backgroundColor: '#cfe8fc'}}>
-        <Grid container item xs={12} style={{paddingTop: '2%'}}>
-          <Grid container item xs={8}>
-            <Grid item xs={4}>
+        <Grid container item lg={8} md={6} xs={12} style={{paddingTop: '2%', paddingLeft: '2%'}}>
+          <Grid container item xs={12}>
+            <Grid item xs={12} lg={4} style={{marginBottom: '2vh'}}>
               <Typography variant="h5" align='center' style={{
                 display: 'flex',
                 itemsAlign: 'center',
@@ -74,44 +107,41 @@ const HomePage = () => {
                 Фільтрація за категорією
               </Typography>
             </Grid>
-            <Grid item xs={4}>
-              <Autocomplete
-                id="categories-filter"
-                options={CategoryTitles}
-                getOptionLabel={(option) => option.title}
-                filterOptions={filterOptions}
-                style={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Вибір категорії" variant="outlined" />}
-              />
+            <Grid item xs={12} lg={3} style={{marginBottom: '2vh'}}>
+              <Select
+                labelId="select-category-label"
+                id="select-category"
+                value={filterCategoryValue}
+                onChange={e => categoryFilterHandler(e.target.value)}
+              >
+                <MenuItem value={0}>{"Всі категорії"}</MenuItem>
+                <MenuItem value={1}>{CategoryTitles[0].title}</MenuItem>
+                <MenuItem value={2}>{CategoryTitles[1].title}</MenuItem>
+                <MenuItem value={3}>{CategoryTitles[2].title}</MenuItem>
+              </Select>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} lg={2} style={{marginBottom: '2vh'}}>
+              <Button
+                style={{height: '100%'}}
+                variant="contained"
+                color="primary"
+                onClick={() => {setRandomFilterCategory()}}
+              >
+                Випадкова
+              </Button>
+            </Grid>
+            <Grid item xs={12} lg={3} style={{marginBottom: '2vh'}}>
               <Button
                 fullWidth
                 style={{height: '100%'}}
                 variant="contained"
                 color="primary"
-                onClick={() => {}}
+                onClick={() => {fetchPetitions()}}
               >
                 Відфільтрувати
               </Button>
             </Grid>
           </Grid>
-          <Grid container item xs={4}>
-            <Grid item xs={12}>
-              <Button
-                fullWidth
-                style={{height: '100%'}}
-                variant="contained"
-                color="primary"
-                onClick={() => {history.push('/petition/create')}}
-              >
-                Створити власну петицію
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid container xs={12}>
-        <Grid container item lg={8} md={6} xs={12} style={{paddingTop: '2%', paddingLeft: '2%'}}>
           <Grid item xs={12} style={{}}>
             <Typography variant="h5" align='center' style={{
               display: 'flex',
@@ -145,6 +175,19 @@ const HomePage = () => {
           </Grid>
         </Grid>
         <Grid container item lg={4} md={6} xs={12} style={{paddingTop: '2%', paddingLeft: '2%'}} alignContent='flex-start' justify='flex-start' alignItems='flex-start'>
+          <Grid container item xs={12} style={{marginBottom: '2vh'}}>
+            <Grid item xs={12}>
+              <Button
+                fullWidth
+                style={{height: '100%'}}
+                variant="contained"
+                color="primary"
+                onClick={() => {history.push('/petition/create')}}
+              >
+                Створити власну петицію
+              </Button>
+            </Grid>
+          </Grid>
           <Grid item xs={12} style={{}}>
             <Typography variant="h5" align='center' style={{
               fontFamily: 'Roboto-Bold',
@@ -160,7 +203,6 @@ const HomePage = () => {
             {lastExpiredPetitions ? lastExpiredPetitions.slice(0,5).map(petition => <Grid key={petition.id} container item xs={12}><Petition petition={petition}
                                                                                            isVotesCountHidden={true}/></Grid>) : null}
           </Grid>
-        </Grid>
         </Grid>
       </Grid>
     </Container>

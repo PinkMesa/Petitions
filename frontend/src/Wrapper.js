@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp";
 import {Switch, Route, Redirect} from "react-router-dom";
 import {useSelector} from 'react-redux';
 import ProgressComponent from "./components/ProgressComponent";
+import SingleUserPetitionsPage from "./pages/SingleUserPetitionsPage";
 
 const Wrapper = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +46,9 @@ const Wrapper = () => {
         </Route>
         <Route exact path="/signup">
           {userId ? <Redirect to='/'/> : (<SignUp/>)}
+        </Route>
+        <Route exact path="/user/:id/">
+          <SingleUserPetitionsPage />
         </Route>
       </Switch>
     </div>

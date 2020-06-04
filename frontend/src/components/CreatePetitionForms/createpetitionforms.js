@@ -20,7 +20,6 @@ const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
 
 const inputReducer = (state, action) => {
-  console.log('inputReducer petforms actioin',action);
   switch (action.type) {
     case INPUT_CHANGE: {
       return {
@@ -71,8 +70,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TitleAndCategoryForm = ({onInputChange, titleValue, categoryValue, errorText, ...props}) => {
-  console.log('title value ' + titleValue);
-
 
   const classes = useStyles();
 
@@ -92,7 +89,6 @@ const TitleAndCategoryForm = ({onInputChange, titleValue, categoryValue, errorTe
   });
 
   useEffect(() => {
-    console.log('useeffect create petition forms inputValues.title', inputState.inputValues.title)
     if(titleValue !== inputState.inputValues.title)
       onInputChange('title', inputState.inputValues.title, inputState.inputValidities.title);
     if(categoryValue !== inputState.inputValues.category)
@@ -100,7 +96,6 @@ const TitleAndCategoryForm = ({onInputChange, titleValue, categoryValue, errorTe
   }, [inputState, onInputChange]);
 
   const handleChangeInput = (inputId, value) => {
-    console.log('inputId: ' + inputId + ' value: ' + value);
 
     let isValid = true;
 
@@ -214,8 +209,6 @@ const DescriptionForm = ({descriptionValue, errorText, onInputChange}) => {
 
 const Review = props => {
   const classes = useStyles();
-
-  const petitionUrl = useSelector(state => state.petitions.addedPetitionUrl);
 
   return (
     <Grid container spacing={2}>

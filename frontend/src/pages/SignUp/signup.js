@@ -147,11 +147,6 @@ const SignUp = () => {
   const inputChangeHandler = (inputId, value) => {
     let isValid = true;
 
-    //touched
-    // if (!inputState.touchedValues[inputId]) {
-    //   dispatchInputState({type: INPUT_TOUCHED, inputId})
-    // }
-
     //input-wide error
     if (value.length < 2 || value.length > 70) {
       isValid = false;
@@ -326,10 +321,6 @@ const SignUp = () => {
               {!inputState.formIsValid && (<Alert variant="filled" severity="error">
                 {errorTexts['formIsValid']}
               </Alert>)}
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary"/>}
-                label="Хочу отримувати всі новини та пропозиції на email!"
-              />
             </Grid>
           </Grid>
           <Button
