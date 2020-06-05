@@ -38,7 +38,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://infinite-journey-16422.herokuapp.com'
+    'https://ancient-oasis-78207.herokuapp.com'
 )
 
 CORS_ALLOW_HEADERS = [
