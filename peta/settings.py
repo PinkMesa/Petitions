@@ -191,3 +191,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Redirects
 LOGIN_REDIRECT_URL = '/'
+
+
+import dj-database-url
+prod_db  =  dj-database-url.config(conn_max_age=500)
+DATABASES['default'].update(prod_db)
